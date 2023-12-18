@@ -11,7 +11,7 @@ export class Order extends AbstractDocument {
   @Prop({ required: true })
   user: string;
 
-  @Prop()
+  @Prop({ required: true })
   price: number;
 
   @Prop({ type: Types.ObjectId, ref: Product.name, required: true })

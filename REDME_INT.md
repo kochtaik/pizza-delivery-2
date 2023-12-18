@@ -14,4 +14,16 @@ Before using any database, you should first create a user:
   ]
 })
 
-Keep in mind that <your_name> and <your_password> should match the credentials in the connection string.
+Example:
+
+db.createUser({
+  user: "kostya",
+  pwd: "password123",
+  roles: [
+    { role: "readWrite", db: "products" }
+  ]
+})
+
+Keep in mind that <your_name> and <your_password> should match the credentials in the connection string:
+
+mongodb://kostya:password123@products_db:27017/products?authSource=admin
