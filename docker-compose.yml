@@ -8,7 +8,7 @@ services:
     env_file:
       - ./apps/orders/.env
     depends_on:
-      - orders_db
+      - mongodb
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
@@ -24,14 +24,14 @@ services:
     env_file:
       - ./apps/products/.env
     depends_on:
-      - products_db
+      - mongodb
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     ports:
       - '3001:3001'
 
-  products_db:
+  mongodb:
     image: mongo
     environment:
       - MONGO_INITDB_ROOT_USERNAME=root
@@ -41,25 +41,15 @@ services:
     ports:
       - '27017:27017'
 
-  orders_db:
-    image: mongo
-    environment:
-      - MONGO_INITDB_ROOT_USERNAME=root
-      - MONGO_INITDB_ROOT_PASSWORD=password123
-    volumes:
-      - 'mongodb_master_data:/data/db'
-    ports:
-      - '27018:27017'
-
   mongo-express:
     image: mongo-express
     environment:
-      - ME_CONFIG_MONGODB_SERVER=products_db
-      - ME_CONFIG_MONGODB_PORT=27017
-      - ME_CONFIG_MONGODB_AUTH_USERNAME=root
-      - ME_CONFIG_MONGODB_AUTH_PASSWORD=password123
+        - ME_CONFIG_MONGODB_SERVER=mongodb
+        - ME_CONFIG_MONGODB_PORT=27017
+        - ME_CONFIG_MONGODB_AUTH_USERNAME=root
+        - ME_CONFIG_MONGODB_AUTH_PASSWORD=password123
     depends_on:
-      - products_db
+      - mongodb
     restart: always
     ports:
       - '8081:8081'

@@ -11,6 +11,6 @@ export class CreateOrderDto {
     readonly price: number
 
     @IsArray()
-    @IsMongoId()
+    @IsMongoId({ each: true })
     readonly products: Array<Types.ObjectId>
 }
