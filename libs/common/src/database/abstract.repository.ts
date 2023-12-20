@@ -58,6 +58,12 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
     return document;
   }
 
+  async deleteOne(
+    filterQuery: FilterQuery<TDocument>,
+  ) {
+    return this.model.deleteOne(filterQuery)
+  }
+
   async upsert(
     filterQuery: FilterQuery<TDocument>,
     document: Partial<TDocument>,

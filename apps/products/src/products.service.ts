@@ -6,7 +6,12 @@ import { ProductsRepository } from './products.repository';
 export class ProductsService {
   constructor(private readonly productsRepository: ProductsRepository) { }
 
-  createProduct(productDto: CreateProductDto) {
+  async createProduct(productDto: CreateProductDto) {
     return this.productsRepository.create(productDto);
+  }
+
+  async deleteProduct(productId: string) {
+    const result = await this.productsRepository.deleteOne({ _id: productId });
+    return { deletedCount: result.deletedCount };
   }
 }
