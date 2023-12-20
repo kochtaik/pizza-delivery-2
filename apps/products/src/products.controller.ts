@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Delete, Param, UsePipes } from '@nestjs/common';
+import { Controller, Get, Post, Body, Delete, Param, UsePipes } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { MongoIdValidationPipe } from '@app/common/shared-pipes';
@@ -10,6 +10,11 @@ export class ProductsController {
   @Post()
   createProduct(@Body() productDto: CreateProductDto) {
     return this.productsService.createProduct(productDto);
+  }
+
+  @Get()
+  getAllProducts() {
+    return this.productsService.getProducts()
   }
 
   @Delete(':id')

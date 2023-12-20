@@ -10,6 +10,10 @@ export class ProductsService {
     return this.productsRepository.create(productDto);
   }
 
+  async getProducts() {
+    return this.productsRepository.find({});
+  }
+
   async deleteProduct(productId: string) {
     const result = await this.productsRepository.deleteOne({ _id: productId });
     return { deletedCount: result.deletedCount };
