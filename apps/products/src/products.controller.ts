@@ -17,6 +17,12 @@ export class ProductsController {
     return this.productsService.getProducts()
   }
 
+  @Get(':id')
+  @UsePipes(MongoIdValidationPipe)
+  getSingleProduct(@Param('id') id: string) {
+    return this.productsService.getProduct(id)
+  }
+
   @Delete(':id')
   @UsePipes(MongoIdValidationPipe)
   deleteProduct(@Param('id') id: string) {

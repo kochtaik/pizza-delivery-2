@@ -14,6 +14,10 @@ export class ProductsService {
     return this.productsRepository.find({});
   }
 
+  async getProduct(productId: string) {
+    return this.productsRepository.findOne({ _id: productId }); 
+  }
+
   async deleteProduct(productId: string) {
     const result = await this.productsRepository.deleteOne({ _id: productId });
     return { deletedCount: result.deletedCount };
