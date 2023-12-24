@@ -3,9 +3,6 @@ import { IsNotEmpty, IsString, Min, IsNumber } from 'class-validator';
 export class CreateProductDto {
   @IsString()
   @IsNotEmpty()
-  /**
-   * Todo: make unique
-   */
   readonly name: string;
 
   @IsString()

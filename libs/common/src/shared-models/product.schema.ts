@@ -3,7 +3,7 @@ import { AbstractDocument } from '../database/abstract.schema';
 
 @Schema({ versionKey: false, timestamps: true })
 export class Product extends AbstractDocument {
-  @Prop({ required: true })
+  @Prop({ required: true, unique: true })
   name: string;
 
   @Prop({ required: true })

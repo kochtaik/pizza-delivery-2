@@ -1,11 +1,19 @@
-import { Controller, Get, Post, Body, Delete, Param, UsePipes } from '@nestjs/common';
-import { ProductsService } from './products.service';
-import { CreateProductDto } from './dto/create-product.dto';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Delete,
+  Param,
+  UsePipes,
+} from '@nestjs/common';
+import { ProductsService } from '../services';
+import { CreateProductDto } from '../dto';
 import { MongoIdValidationPipe } from '@app/common/shared-pipes';
 
 @Controller('products')
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) { }
+  constructor(private readonly productsService: ProductsService) {}
 
   @Post()
   createProduct(@Body() productDto: CreateProductDto) {
@@ -14,13 +22,13 @@ export class ProductsController {
 
   @Get()
   getAllProducts() {
-    return this.productsService.getProducts()
+    return this.productsService.getProducts();
   }
 
   @Get(':id')
   @UsePipes(MongoIdValidationPipe)
   getSingleProduct(@Param('id') id: string) {
-    return this.productsService.getProduct(id)
+    return this.productsService.getProduct(id);
   }
 
   @Delete(':id')

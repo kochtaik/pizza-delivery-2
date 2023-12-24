@@ -25,4 +25,4 @@ db.createUser({
 })
 
 Keep in mind that <your_name> and <your_password> should match the credentials in the connection string:
-mongodb://kostya:password123@products_db:27017/products?authSource=admin
+mongodb://kostya:password123@mongodb:27017/products?authSource=admin

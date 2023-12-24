@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
-import { ProductsController } from './products.controller';
-import { ProductsService } from './products.service';
+import { IngredientsController, ProductsController } from './controllers';
+import { IngredientsService, ProductsService } from './services';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule, Product, ProductSchema } from '@app/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ProductsRepository } from './products.repository';
+import { IngredientsRepository, ProductsRepository } from './repositories';
 import * as Joi from 'joi';
+import { Ingredient, IngredientSchema } from './schemas';
 
 @Module({
   imports: [
@@ -18,9 +19,17 @@ import * as Joi from 'joi';
       }),
     }),
     DatabaseModule,
-    MongooseModule.forFeature([{ name: Product.name, schema: ProductSchema }]),
+    MongooseModule.forFeature([
+      { name: Product.name, schema: ProductSchema },
+      { name: Ingredient.name, schema: IngredientSchema },
+    ]),
   ],
-  controllers: [ProductsController],
-  providers: [ProductsService, ProductsRepository],
+  controllers: [ProductsController, IngredientsController],
+  providers: [
+    ProductsService,
+    IngredientsService,
+    IngredientsRepository,
+    ProductsRepository,
+  ],
 })
-export class ProductsModule { }
+export class ProductsModule {}

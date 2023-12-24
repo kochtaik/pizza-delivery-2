@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { CreateProductDto } from './dto/create-product.dto';
-import { ProductsRepository } from './products.repository';
+import { CreateProductDto } from './../dto';
+import { ProductsRepository } from './../repositories';
 
 @Injectable()
 export class ProductsService {
-  constructor(private readonly productsRepository: ProductsRepository) { }
+  constructor(private readonly productsRepository: ProductsRepository) {}
 
   async createProduct(productDto: CreateProductDto) {
     return this.productsRepository.create(productDto);
@@ -15,7 +15,7 @@ export class ProductsService {
   }
 
   async getProduct(productId: string) {
-    return this.productsRepository.findOne({ _id: productId }); 
+    return this.productsRepository.findOne({ _id: productId });
   }
 
   async deleteProduct(productId: string) {
