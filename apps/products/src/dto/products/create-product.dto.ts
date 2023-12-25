@@ -1,4 +1,13 @@
-import { IsNotEmpty, IsString, Min, IsNumber } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  Min,
+  IsNumber,
+  IsArray,
+  ArrayUnique,
+  Validate,
+} from 'class-validator';
+import { IngredientExistsValidator } from '../../validators';
 
 export class CreateProductDto {
   @IsString()
@@ -19,4 +28,9 @@ export class CreateProductDto {
   @IsNumber()
   @Min(0, { message: 'Weight must be greater than 0' })
   readonly weight: number;
+
+  @IsArray()
+  @ArrayUnique()
+  @Validate(IngredientExistsValidator, { each: true })
+  readonly ingredients: Array<string>;
 }

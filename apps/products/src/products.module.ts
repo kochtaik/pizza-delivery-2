@@ -2,11 +2,17 @@ import { Module } from '@nestjs/common';
 import { IngredientsController, ProductsController } from './controllers';
 import { IngredientsService, ProductsService } from './services';
 import { ConfigModule } from '@nestjs/config';
-import { DatabaseModule, Product, ProductSchema } from '@app/common';
+import {
+  DatabaseModule,
+  Product,
+  ProductSchema,
+  Ingredient,
+  IngredientSchema,
+} from '@app/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { IngredientsRepository, ProductsRepository } from './repositories';
 import * as Joi from 'joi';
-import { Ingredient, IngredientSchema } from './schemas';
+import { IngredientExistsValidator } from './validators';
 
 @Module({
   imports: [
@@ -26,10 +32,11 @@ import { Ingredient, IngredientSchema } from './schemas';
   ],
   controllers: [ProductsController, IngredientsController],
   providers: [
-    ProductsService,
     IngredientsService,
+    ProductsService,
     IngredientsRepository,
     ProductsRepository,
+    IngredientExistsValidator,
   ],
 })
 export class ProductsModule {}

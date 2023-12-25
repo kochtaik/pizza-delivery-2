@@ -6,9 +6,10 @@ import {
   Delete,
   Param,
   UsePipes,
+  Patch,
 } from '@nestjs/common';
 import { ProductsService } from '../services';
-import { CreateProductDto } from '../dto';
+import { CreateProductDto, UpdateProductDto } from '../dto';
 import { MongoIdValidationPipe } from '@app/common/shared-pipes';
 
 @Controller('products')
@@ -18,6 +19,15 @@ export class ProductsController {
   @Post()
   createProduct(@Body() productDto: CreateProductDto) {
     return this.productsService.createProduct(productDto);
+  }
+
+  @Patch(':id')
+  @UsePipes(MongoIdValidationPipe)
+  updateProduct(
+    @Param('id') id: string,
+    @Body() updateProductDto: UpdateProductDto,
+  ) {
+    return this.productsService.updateProduct(id, updateProductDto);
   }
 
   @Get()

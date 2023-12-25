@@ -1,5 +1,5 @@
 import { AbstractRepository } from '@app/common';
-import { Ingredient } from './../schemas';
+import { Ingredient } from '@app/common';
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { Model, Connection } from 'mongoose';

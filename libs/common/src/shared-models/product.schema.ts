@@ -17,6 +17,9 @@ export class Product extends AbstractDocument {
 
   @Prop({ required: false })
   description: string;
+
+  @Prop({ required: false })
+  ingredients: Array<string>;
 }
 
 export const ProductSchema = SchemaFactory.createForClass(Product);

@@ -7,6 +7,10 @@ import { MongoError } from 'mongodb';
 export class IngredientsService {
   constructor(private readonly ingredientsRepository: IngredientsRepository) {}
 
+  async getIngredientByName(name: string) {
+    return this.ingredientsRepository.findOne({ name });
+  }
+
   async createIngredient(createIngredientDto: CreateIngredientDto) {
     try {
       return await this.ingredientsRepository.create(createIngredientDto);

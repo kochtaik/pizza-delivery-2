@@ -15,7 +15,7 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
   constructor(
     protected readonly model: Model<TDocument>,
     private readonly connection: Connection,
-  ) { }
+  ) {}
 
   async create(
     document: Omit<TDocument, '_id'>,
@@ -58,10 +58,8 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
     return document;
   }
 
-  async deleteOne(
-    filterQuery: FilterQuery<TDocument>,
-  ) {
-    return this.model.deleteOne(filterQuery)
+  async deleteOne(filterQuery: FilterQuery<TDocument>) {
+    return this.model.deleteOne(filterQuery);
   }
 
   async upsert(
