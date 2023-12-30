@@ -1,12 +1,18 @@
-import { Controller, Get } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { CartService } from './cart.service';
+import { UpdateCartDto } from './dto/update-cart.dto';
 
-@Controller()
+@Controller('cart')
 export class CartController {
   constructor(private readonly cartService: CartService) {}
 
+  @Post()
+  updateCart(@Body() updateCartDto: UpdateCartDto) {
+    return this.cartService.updateCart(updateCartDto);
+  }
+
   @Get()
-  getHello(): string {
-    return this.cartService.getHello();
+  getCart() {
+    return 'Not implemented';
   }
 }

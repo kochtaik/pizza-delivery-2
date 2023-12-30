@@ -31,6 +31,22 @@ services:
     ports:
       - '3001:3001'
 
+  cart:
+    build:
+      context: .
+      dockerfile: './apps/cart/Dockerfile'
+      target: development
+    command: yarn run start:dev cart
+    env_file:
+      - ./apps/cart/.env
+    depends_on:
+      - mongodb
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '3002:3002'
+
   mongodb:
     image: mongo
     environment:
