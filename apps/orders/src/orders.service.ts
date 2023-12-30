@@ -4,7 +4,7 @@ import { OrdersRepository } from './orders.repository';
 
 @Injectable()
 export class OrdersService {
-  constructor(private readonly ordersRepository: OrdersRepository) { }
+  constructor(private readonly ordersRepository: OrdersRepository) {}
 
   createOrder(createOrderDto: CreateOrderDto) {
     return this.ordersRepository.create(createOrderDto);

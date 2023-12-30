@@ -14,12 +14,12 @@ import * as Joi from 'joi';
       isGlobal: true,
       envFilePath: ['./apps/auth/.env'],
       validationSchema: Joi.object({
-        MONOGDB_URI: Joi.string().required(),
+        MONGODB_URI: Joi.string().required(),
         PORT: Joi.number().required(),
-      })
-    })
+      }),
+    }),
   ],
   controllers: [AuthController],
   providers: [AuthService],
 })
-export class AuthModule { }
+export class AuthModule {}

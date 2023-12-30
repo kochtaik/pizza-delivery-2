@@ -1,18 +1,17 @@
-import { Injectable, UnprocessableEntityException } from "@nestjs/common";
-import { UsersRepository } from "./users.repository";
-import { CreateUserDto } from "./dto/create-user.dto";
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { UsersRepository } from './users.repository';
+import { CreateUserDto } from './dto/create-user.dto';
 import * as argon from 'argon2';
-import { Role } from "@app/common";
+import { Role } from '@app/common';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly usersRepository: UsersRepository) { }
+  constructor(private readonly usersRepository: UsersRepository) {}
 
   async checkIfUserExists(email: string) {
     try {
       await this.usersRepository.findOne({ email });
       throw new UnprocessableEntityException('User already exists');
-
     } catch (error) {
       if (error instanceof UnprocessableEntityException) {
         throw error;
@@ -29,8 +28,8 @@ export class UsersService {
       ...createUserDto,
       password: hash,
       role: Role.USER,
-    }
+    };
 
-    return await this.usersRepository.create(userToSave)
+    return await this.usersRepository.create(userToSave);
   }
 }

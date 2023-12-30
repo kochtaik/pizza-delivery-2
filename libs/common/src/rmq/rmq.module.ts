@@ -1,8 +1,8 @@
-import { Module } from "@nestjs/common";
-import { RmqService } from "./rmq.service";
+import { Module } from '@nestjs/common';
+import { RmqService } from './rmq.service';
 
 @Module({
-    providers: [RmqService],
-    exports: [RmqService],
+  providers: [RmqService],
+  exports: [RmqService],
 })
-export class RmqModule { }
+export class RmqModule {}
