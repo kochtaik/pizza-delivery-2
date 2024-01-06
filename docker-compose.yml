@@ -62,7 +62,7 @@ services:
       - /usr/src/app/node_modules
     ports:
       - '3003:3003'
-  
+
   mongodb:
     image: mongo
     environment:
@@ -76,16 +76,16 @@ services:
   mongo-express:
     image: mongo-express
     environment:
-        - ME_CONFIG_MONGODB_SERVER=mongodb
-        - ME_CONFIG_MONGODB_PORT=27017
-        - ME_CONFIG_MONGODB_AUTH_USERNAME=root
-        - ME_CONFIG_MONGODB_AUTH_PASSWORD=password123
+      - ME_CONFIG_MONGODB_SERVER=mongodb
+      - ME_CONFIG_MONGODB_PORT=27017
+      - ME_CONFIG_MONGODB_AUTH_USERNAME=root
+      - ME_CONFIG_MONGODB_AUTH_PASSWORD=password123
     depends_on:
       - mongodb
     restart: always
     ports:
       - '8081:8081'
-  
+
   rabbitmq:
     image: rabbitmq
     ports:
