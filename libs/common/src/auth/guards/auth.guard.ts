@@ -7,13 +7,13 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { ClientProxy } from '@nestjs/microservices';
-import { AUTH_SERVICE } from '../shared-constants';
+import { AUTH_SERVICE } from '../../shared-constants';
 import { lastValueFrom } from 'rxjs';
-import { FullJwtPayload } from './auth.types';
+import { FullJwtPayload } from '../auth.types';
 
 @Injectable()
 export class JwtGuard implements CanActivate {
-  constructor(@Inject(AUTH_SERVICE) private readonly client: ClientProxy) { }
+  constructor(@Inject(AUTH_SERVICE) private readonly client: ClientProxy) {}
 
   async canActivate(context: ExecutionContext) {
     const request = context.switchToHttp().getRequest<Request>();
@@ -28,6 +28,7 @@ export class JwtGuard implements CanActivate {
         this.client.send<FullJwtPayload, string>('verify', token),
       );
 
+      request.user = payload;
       return !!payload;
     } catch (error) {
       throw new UnauthorizedException();

@@ -12,14 +12,16 @@ import {
 import { ProductsService } from '../services';
 import { CreateProductDto, UpdateProductDto } from '../dto';
 import { MongoIdValidationPipe } from '@app/common/shared-pipes';
-import { JwtGuard } from '@app/common';
+import { JwtGuard, Role, RolesGuard } from '@app/common';
+import { Roles } from '@app/common/auth/decorators';
 
 @Controller('products')
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) { }
+  constructor(private readonly productsService: ProductsService) {}
 
   @Post()
-  @UseGuards(JwtGuard)
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtGuard, RolesGuard)
   createProduct(@Body() productDto: CreateProductDto) {
     return this.productsService.createProduct(productDto);
   }
