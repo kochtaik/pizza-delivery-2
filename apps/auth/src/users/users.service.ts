@@ -28,10 +28,10 @@ export class UsersService {
 
     const hash = await argon.hash(createUserDto.password);
 
-    const userToSave: CreateUserDto & { role: Role } = {
+    const userToSave: CreateUserDto & { roles: Array<Role> } = {
       ...createUserDto,
       password: hash,
-      role: Role.USER,
+      roles: [Role.USER],
     };
 
     return await this.usersRepository.create(userToSave);

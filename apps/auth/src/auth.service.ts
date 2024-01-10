@@ -9,14 +9,14 @@ import { JwtService } from '@nestjs/jwt';
 import { UsersService } from './users/users.service';
 import { verify } from 'argon2';
 import { CreateUserDto } from './users/dto/create-user.dto';
-import { BaseJwtPayload, FullJwtPayload } from '@app/common';
+import { BaseJwtPayload, FullJwtPayload, Role } from '@app/common';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly userService: UsersService,
-  ) { }
+  ) {}
 
   private async verifyPassword(password: string, hash: string) {
     const isPasswordValid = await verify(hash, password);
@@ -26,8 +26,8 @@ export class AuthService {
     }
   }
 
-  private async signToken(userId: string, email: string) {
-    const payload: BaseJwtPayload = { sub: userId, email };
+  private async signToken(userId: string, email: string, roles: Array<Role>) {
+    const payload: BaseJwtPayload = { sub: userId, email, roles };
     return this.jwtService.signAsync(payload);
   }
 
@@ -44,7 +44,11 @@ export class AuthService {
     try {
       const user = await this.userService.getUserByEmail(email);
       await this.verifyPassword(password, user.password);
-      const token = await this.signToken(user._id.toString(), user.email);
+      const token = await this.signToken(
+        user._id.toString(),
+        user.email,
+        user.roles,
+      );
 
       return { token };
     } catch (error) {
@@ -58,7 +62,11 @@ export class AuthService {
 
   async signup(createUserDto: CreateUserDto) {
     const user = await this.userService.createUser(createUserDto);
-    const token = await this.signToken(user._id.toString(), user.email);
+    const token = await this.signToken(
+      user._id.toString(),
+      user.email,
+      user.roles,
+    );
 
     return { token };
   }

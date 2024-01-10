@@ -13,8 +13,8 @@ export class User extends AbstractDocument {
   @Prop({ required: true, unique: true })
   email: string;
 
-  @Prop({ type: String, enum: Role, default: Role.USER })
-  role: Role;
+  @Prop({ type: [{ type: String, enum: Object.values(Role) }] })
+  roles: Array<Role>;
 
   @Prop({ type: String, required: true })
   password: string;
