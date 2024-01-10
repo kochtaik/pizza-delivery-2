@@ -7,16 +7,19 @@ import {
   Param,
   UsePipes,
   Patch,
+  UseGuards,
 } from '@nestjs/common';
 import { ProductsService } from '../services';
 import { CreateProductDto, UpdateProductDto } from '../dto';
 import { MongoIdValidationPipe } from '@app/common/shared-pipes';
+import { JwtGuard } from '@app/common';
 
 @Controller('products')
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) {}
+  constructor(private readonly productsService: ProductsService) { }
 
   @Post()
+  @UseGuards(JwtGuard)
   createProduct(@Body() productDto: CreateProductDto) {
     return this.productsService.createProduct(productDto);
   }

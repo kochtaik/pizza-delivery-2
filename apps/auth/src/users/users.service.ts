@@ -8,9 +8,13 @@ import { Role } from '@app/common';
 export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) {}
 
-  async checkIfUserExists(email: string) {
+  async getUserByEmail(email: string) {
+    return await this.usersRepository.findOne({ email });
+  }
+
+  private async checkIfUserExists(email: string) {
     try {
-      await this.usersRepository.findOne({ email });
+      await this.getUserByEmail(email);
       throw new UnprocessableEntityException('User already exists');
     } catch (error) {
       if (error instanceof UnprocessableEntityException) {

@@ -13,6 +13,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { IngredientsRepository, ProductsRepository } from './repositories';
 import * as Joi from 'joi';
 import { IngredientExistsValidator } from './validators';
+import { AuthModule, RmqModule } from '@app/common';
 
 @Module({
   imports: [
@@ -22,6 +23,8 @@ import { IngredientExistsValidator } from './validators';
       validationSchema: Joi.object({
         MONGODB_URI: Joi.string().required(),
         PORT: Joi.number().required(),
+        RABBITMQ_AUTH_SERVICE_QUEUE: Joi.string().required(),
+        RABBITMQ_PRODUCT_SERVICE_QUEUE: Joi.string().required(),
       }),
     }),
     DatabaseModule,
@@ -29,6 +32,8 @@ import { IngredientExistsValidator } from './validators';
       { name: Product.name, schema: ProductSchema },
       { name: Ingredient.name, schema: IngredientSchema },
     ]),
+    AuthModule,
+    RmqModule,
   ],
   controllers: [ProductsController, IngredientsController],
   providers: [

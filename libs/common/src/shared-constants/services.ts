@@ -1,2 +1,3 @@
 export const AUTH_SERVICE = 'AUTH_SERVICE';
 export const CART_SERVICE = 'CART_SERVICE';
+export const PRODUCT_SERVICE = 'PRODUCT_SERVICE';

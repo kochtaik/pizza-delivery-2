@@ -1,11 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { UpdateCartDto } from './dto/update-cart.dto';
 import { Types } from 'mongoose';
 import { CartRepository } from './cart.repository';
+import { AUTH_SERVICE } from '@app/common';
+import { ClientProxy } from '@nestjs/microservices';
 
 @Injectable()
 export class CartService {
-  constructor(private readonly cartRepository: CartRepository) {}
+  constructor(
+    private readonly cartRepository: CartRepository,
+    @Inject(AUTH_SERVICE) private authClient: ClientProxy,
+  ) { }
 
   getItemByProductId(userId: Types.ObjectId, productId: Types.ObjectId) {
     return this.cartRepository.findOne({
