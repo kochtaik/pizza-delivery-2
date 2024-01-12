@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException } from '@nestjs/common';
 import { UpdateCartDto } from './dto/update-cart.dto';
 import { Types } from 'mongoose';
 import { CartRepository } from './cart.repository';
@@ -19,7 +19,7 @@ export class CartService {
     });
   }
 
-  addToCart(
+  private addToCart(
     userCartId: Types.ObjectId,
     productId: Types.ObjectId,
     quantity: number,
@@ -38,7 +38,7 @@ export class CartService {
     );
   }
 
-  updateItemQuantity(
+  private updateItemQuantity(
     userCartId: Types.ObjectId,
     cartItemId: Types.ObjectId,
     quantity: number,
@@ -56,25 +56,27 @@ export class CartService {
     );
   }
 
-  getUserCart(userId: Types.ObjectId) {
-    return this.cartRepository.findOne({ userId });
+  private async getUserCart(userId: Types.ObjectId) {
+    try {
+      return await this.cartRepository.findOne({ userId });
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        return await this.createUserCart(userId);
+      }
+
+      throw error;
+    }
   }
 
-  createUserCart(userId: Types.ObjectId) {
+  private createUserCart(userId: Types.ObjectId) {
     return this.cartRepository.create({ userId, items: [] });
   }
 
-  // todo: implement transaction
-
-  async updateCart(updateCartDto: UpdateCartDto) {
+  public async updateCart(userId: string, updateCartDto: UpdateCartDto) {
     const { cartItems } = updateCartDto;
 
-    const userId: any = 1;
-    let userCart = await this.getUserCart(userId);
-
-    if (!userCart) {
-      userCart = await this.createUserCart(userId);
-    }
+    const userMongoId = new Types.ObjectId(userId);
+    const userCart = await this.getUserCart(userMongoId);
 
     const updatePromises = cartItems.map(async (cartItem) => {
       const existingCartItem: any = userCart.items.find(
@@ -82,13 +84,13 @@ export class CartService {
       );
 
       if (existingCartItem) {
-        await this.updateItemQuantity(
+        return await this.updateItemQuantity(
           userCart._id,
           existingCartItem._id,
           cartItem.quantity,
         );
       } else {
-        await this.addToCart(
+        return await this.addToCart(
           userCart._id,
           cartItem.productId,
           cartItem.quantity,
@@ -96,6 +98,6 @@ export class CartService {
       }
     });
 
-    return await Promise.all(updatePromises);
+    return (await Promise.all(updatePromises)).at(-1);
   }
 }
