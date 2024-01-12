@@ -1,6 +1,7 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Param, Post, Put, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserDto, AssignRolesDto } from './dto';
+import { Roles, JwtGuard, Role, RolesGuard } from '@app/common';
 
 @Controller('auth/users')
 export class UsersController {
@@ -9,5 +10,15 @@ export class UsersController {
   @Post()
   createUser(@Body() createUserDto: CreateUserDto) {
     return this.usersService.createUser(createUserDto);
+  }
+
+  @Put('/:id/assign-roles')
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtGuard, RolesGuard)
+  assignRoles(
+    @Param('id') userId: string,
+    @Body() assignRolesDto: AssignRolesDto,
+  ) {
+    return this.usersService.assignRoles(userId, assignRolesDto);
   }
 }

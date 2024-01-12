@@ -3,6 +3,7 @@ import { UsersRepository } from './users.repository';
 import { CreateUserDto } from './dto/create-user.dto';
 import * as argon from 'argon2';
 import { Role } from '@app/common';
+import { AssignRolesDto } from './dto';
 
 @Injectable()
 export class UsersService {
@@ -10,6 +11,13 @@ export class UsersService {
 
   async getUserByEmail(email: string) {
     return await this.usersRepository.findOne({ email });
+  }
+
+  async assignRoles(userId: string, { roles }: AssignRolesDto) {
+    return await this.usersRepository.findOneAndUpdate(
+      { _id: userId },
+      { roles },
+    );
   }
 
   private async checkIfUserExists(email: string) {
