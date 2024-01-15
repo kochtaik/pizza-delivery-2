@@ -8,6 +8,7 @@ import {
   ProductSchema,
   Ingredient,
   IngredientSchema,
+  PRODUCT_SERVICE,
 } from '@app/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { IngredientsRepository, ProductsRepository } from './repositories';
@@ -33,7 +34,7 @@ import { AuthModule, RmqModule } from '@app/common';
       { name: Ingredient.name, schema: IngredientSchema },
     ]),
     AuthModule,
-    RmqModule,
+    RmqModule.register({ name: PRODUCT_SERVICE }),
   ],
   controllers: [ProductsController, IngredientsController],
   providers: [

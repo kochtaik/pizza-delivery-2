@@ -1,5 +1,10 @@
 import { Module } from '@nestjs/common';
-import { AuthModule, CartSchema, DatabaseModule } from '@app/common';
+import {
+  AuthModule,
+  CartSchema,
+  DatabaseModule,
+  PRODUCT_SERVICE,
+} from '@app/common';
 import { CartController } from './cart.controller';
 import { CartService } from './cart.service';
 import { ConfigModule } from '@nestjs/config';
@@ -20,8 +25,8 @@ import { RmqModule } from '@app/common';
     }),
     DatabaseModule,
     MongooseModule.forFeature([{ name: 'Cart', schema: CartSchema }]),
+    RmqModule.register({ name: PRODUCT_SERVICE }),
     AuthModule,
-    RmqModule,
   ],
   controllers: [CartController],
   providers: [CartService, CartRepository],

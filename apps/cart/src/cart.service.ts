@@ -1,37 +1,62 @@
-import { Injectable, Inject, NotFoundException } from '@nestjs/common';
-import { UpdateCartDto } from './dto/update-cart.dto';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Types } from 'mongoose';
 import { CartRepository } from './cart.repository';
-import { AUTH_SERVICE } from '@app/common';
+import { AddToCartDto } from './dto';
 import { ClientProxy } from '@nestjs/microservices';
+import { CartItem, PRODUCT_SERVICE, Product } from '@app/common';
+import { lastValueFrom } from 'rxjs';
 
 @Injectable()
 export class CartService {
   constructor(
     private readonly cartRepository: CartRepository,
-    @Inject(AUTH_SERVICE) private authClient: ClientProxy,
-  ) { }
+    @Inject(PRODUCT_SERVICE) private readonly productService: ClientProxy,
+  ) {}
 
-  getItemByProductId(userId: Types.ObjectId, productId: Types.ObjectId) {
-    return this.cartRepository.findOne({
-      userId,
-      'items.productId': productId,
-    });
+  public async updateCart(userId: string, addToCartDto: AddToCartDto) {
+    const userIdMongo = new Types.ObjectId(userId);
+    const productToAddIdMongo = new Types.ObjectId(addToCartDto.productId);
+    const userCart = await this.getUserCart(userIdMongo);
+
+    const cartProduct = userCart.items.find((cartItem) =>
+      cartItem.productId.equals(productToAddIdMongo),
+    );
+
+    if (!cartProduct && addToCartDto.quantity === 0) {
+      throw new NotFoundException(
+        `Product ${addToCartDto.productId} is not added to the cart, so quantity cannot be 0`,
+      );
+    }
+
+    const actualProduct = await this.getProduct(addToCartDto.productId);
+
+    if (!cartProduct) {
+      await this.addToCart(userCart._id, {
+        ...addToCartDto,
+        price: actualProduct.price,
+      });
+    } else {
+      await this.updateItemQuantity(
+        userCart._id,
+        cartProduct.productId,
+        addToCartDto.quantity,
+      );
+    }
+
+    return await this.updateTotalAmount(userCart._id);
   }
 
   private addToCart(
     userCartId: Types.ObjectId,
-    productId: Types.ObjectId,
-    quantity: number,
+    cartItem: Omit<CartItem, 'productId'> & { productId: string; },
   ) {
     return this.cartRepository.findOneAndUpdate(
       { _id: userCartId },
       {
         $push: {
           items: {
-            _id: new Types.ObjectId(),
-            productId,
-            quantity,
+            ...cartItem,
+            productId: new Types.ObjectId(cartItem.productId),
           },
         },
       },
@@ -40,18 +65,18 @@ export class CartService {
 
   private updateItemQuantity(
     userCartId: Types.ObjectId,
-    cartItemId: Types.ObjectId,
+    productId: Types.ObjectId,
     quantity: number,
   ) {
     if (quantity === 0) {
-      return this.cartRepository.deleteOne({
-        _id: userCartId,
-        'items._id': cartItemId,
-      });
+      return this.cartRepository.findOneAndUpdate(
+        { _id: userCartId },
+        { $pull: { items: { productId } } },
+      );
     }
 
     return this.cartRepository.findOneAndUpdate(
-      { _id: userCartId, 'items._id': cartItemId },
+      { _id: userCartId, 'items.productId': productId },
       { 'items.$.quantity': quantity },
     );
   }
@@ -68,36 +93,35 @@ export class CartService {
     }
   }
 
-  private createUserCart(userId: Types.ObjectId) {
-    return this.cartRepository.create({ userId, items: [] });
+  private async getProduct(productId: string) {
+    try {
+      return await lastValueFrom(
+        this.productService.send<Product, string>('getProduct', productId),
+      );
+    } catch (error) {
+      throw new NotFoundException(`Product ${productId} not found`);
+    }
   }
 
-  public async updateCart(userId: string, updateCartDto: UpdateCartDto) {
-    const { cartItems } = updateCartDto;
+  private async updateTotalAmount(userCartId: Types.ObjectId) {
+    return this.cartRepository.findOneAndUpdate({ _id: userCartId }, [
+      {
+        $set: {
+          totalAmount: {
+            $sum: {
+              $map: {
+                input: '$items',
+                as: 'item',
+                in: { $multiply: ['$$item.quantity', '$$item.price'] },
+              },
+            },
+          },
+        },
+      },
+    ]);
+  }
 
-    const userMongoId = new Types.ObjectId(userId);
-    const userCart = await this.getUserCart(userMongoId);
-
-    const updatePromises = cartItems.map(async (cartItem) => {
-      const existingCartItem: any = userCart.items.find(
-        (item) => item.productId === cartItem.productId,
-      );
-
-      if (existingCartItem) {
-        return await this.updateItemQuantity(
-          userCart._id,
-          existingCartItem._id,
-          cartItem.quantity,
-        );
-      } else {
-        return await this.addToCart(
-          userCart._id,
-          cartItem.productId,
-          cartItem.quantity,
-        );
-      }
-    });
-
-    return (await Promise.all(updatePromises)).at(-1);
+  private createUserCart(userId: Types.ObjectId) {
+    return this.cartRepository.create({ userId, items: [], totalAmount: 0 });
   }
 }

@@ -14,6 +14,7 @@ import { CreateProductDto, UpdateProductDto } from '../dto';
 import { MongoIdValidationPipe } from '@app/common/shared-pipes';
 import { JwtGuard, Role, RolesGuard } from '@app/common';
 import { Roles } from '@app/common/auth/decorators';
+import { MessagePattern } from '@nestjs/microservices';
 
 @Controller('products')
 export class ProductsController {
@@ -50,5 +51,10 @@ export class ProductsController {
   @UsePipes(MongoIdValidationPipe)
   deleteProduct(@Param('id') id: string) {
     return this.productsService.deleteProduct(id);
+  }
+
+  @MessagePattern('getProduct')
+  getProduct(id: string) {
+    return this.productsService.getProduct(id);
   }
 }

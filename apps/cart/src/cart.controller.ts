@@ -1,6 +1,14 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  // Get,
+  // Param,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { CartService } from './cart.service';
-import { UpdateCartDto } from './dto/update-cart.dto';
+import { AddToCartDto } from './dto';
 import { Request } from 'express';
 import { FullJwtPayload, JwtGuard } from '@app/common';
 
@@ -8,15 +16,18 @@ import { FullJwtPayload, JwtGuard } from '@app/common';
 export class CartController {
   constructor(private readonly cartService: CartService) {}
 
-  @Post()
+  @Post('add')
   @UseGuards(JwtGuard)
-  updateCart(@Req() request: Request, @Body() updateCartDto: UpdateCartDto) {
-    const { sub: userId } = request.user as FullJwtPayload;
-    return this.cartService.updateCart(userId, updateCartDto);
+  async addToCart(
+    @Req() req: Request & { user: FullJwtPayload },
+    @Body() addToCartDto: AddToCartDto,
+  ) {
+    return this.cartService.updateCart(req.user.sub, addToCartDto);
   }
 
-  @Get()
-  getCart() {
-    return 'Not implemented';
-  }
+  // @Get()
+  // @UseGuards(JwtGuard)
+  // async getCart(@Req() req: Request & { user: FullJwtPayload }) {
+  //   return this.cartService.getCart(req.user.sub);
+  // }
 }
