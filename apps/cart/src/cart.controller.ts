@@ -11,6 +11,7 @@ import { CartService } from './cart.service';
 import { AddToCartDto } from './dto';
 import { Request } from 'express';
 import { FullJwtPayload, JwtGuard } from '@app/common';
+import { EventPattern } from '@nestjs/microservices';
 
 @Controller('cart')
 export class CartController {
@@ -23,6 +24,11 @@ export class CartController {
     @Body() addToCartDto: AddToCartDto,
   ) {
     return this.cartService.updateCart(req.user.sub, addToCartDto);
+  }
+
+  @EventPattern('order-created')
+  async onOrderCreated(payload: { cartId: string }) {
+    return this.cartService.clearCart(payload.cartId);
   }
 
   // @Get()

@@ -21,7 +21,8 @@ export class OrdersService {
       const cart = await lastValueFrom(
         this.cartService.send<Cart>('getCart', userId),
       );
-      if (!cart || cart.length === 0) {
+      console.log({ cart });
+      if (!cart) {
         throw new UnprocessableEntityException('Cart must not be empty');
       }
 
@@ -29,8 +30,9 @@ export class OrdersService {
         userId: new Types.ObjectId(userId),
         isPaid: false,
         totalAmount: cart.totalAmount,
-        products: cart.products,
+        products: cart.items,
       };
+
       const order = await this.ordersRepository.create(orderData);
 
       this.cartService.emit('order-created', { cartId: cart._id });

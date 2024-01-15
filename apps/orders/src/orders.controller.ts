@@ -1,6 +1,7 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
 import { OrdersService } from './orders.service';
 import { Request } from 'express';
+import { FullJwtPayload, JwtGuard } from '@app/common';
 
 @Controller('orders')
 export class OrdersController {

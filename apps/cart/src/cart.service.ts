@@ -46,9 +46,13 @@ export class CartService {
     return await this.updateTotalAmount(userCart._id);
   }
 
+  public async clearCart(cartId: string) {
+    return this.cartRepository.deleteOne({ _id: new Types.ObjectId(cartId) });
+  }
+
   private addToCart(
     userCartId: Types.ObjectId,
-    cartItem: Omit<CartItem, 'productId'> & { productId: string; },
+    cartItem: Omit<CartItem, 'productId'> & { productId: string },
   ) {
     return this.cartRepository.findOneAndUpdate(
       { _id: userCartId },
