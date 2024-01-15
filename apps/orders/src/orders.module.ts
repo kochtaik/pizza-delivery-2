@@ -6,7 +6,7 @@ import * as Joi from 'joi';
 import { DatabaseModule } from '@app/common';
 import { OrdersRepository } from './orders.repository';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Order, OrderSchema } from './schemas/order.schema';
+import { Order, OrderSchema } from '@app/common';
 
 @Module({
   imports: [
