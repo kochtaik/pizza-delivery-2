@@ -1,7 +1,7 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Types } from 'mongoose';
 import { CartRepository } from './cart.repository';
-import { AddToCartDto } from './dto';
+import { UpdateCartDto } from './dto';
 import { ClientProxy } from '@nestjs/microservices';
 import { CartItem, PRODUCT_SERVICE, Product } from '@app/common';
 import { lastValueFrom } from 'rxjs';
@@ -13,33 +13,33 @@ export class CartService {
     @Inject(PRODUCT_SERVICE) private readonly productService: ClientProxy,
   ) {}
 
-  public async updateCart(userId: string, addToCartDto: AddToCartDto) {
+  public async updateCart(userId: string, updateCartDto: UpdateCartDto) {
     const userIdMongo = new Types.ObjectId(userId);
-    const productToAddIdMongo = new Types.ObjectId(addToCartDto.productId);
+    const productToAddIdMongo = new Types.ObjectId(updateCartDto.productId);
     const userCart = await this.getUserCart(userIdMongo);
 
     const cartProduct = userCart.items.find((cartItem) =>
       cartItem.productId.equals(productToAddIdMongo),
     );
 
-    if (!cartProduct && addToCartDto.quantity === 0) {
+    if (!cartProduct && updateCartDto.quantity === 0) {
       throw new NotFoundException(
-        `Product ${addToCartDto.productId} is not added to the cart, so quantity cannot be 0`,
+        `Product ${updateCartDto.productId} is not added to the cart, so quantity cannot be 0`,
       );
     }
 
-    const actualProduct = await this.getProduct(addToCartDto.productId);
+    const actualProduct = await this.getProduct(updateCartDto.productId);
 
     if (!cartProduct) {
       await this.addToCart(userCart._id, {
-        ...addToCartDto,
+        ...updateCartDto,
         price: actualProduct.price,
       });
     } else {
       await this.updateItemQuantity(
         userCart._id,
         cartProduct.productId,
-        addToCartDto.quantity,
+        updateCartDto.quantity,
       );
     }
 

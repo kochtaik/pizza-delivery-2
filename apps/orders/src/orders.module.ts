@@ -12,6 +12,7 @@ import {
 import { OrdersRepository } from './orders.repository';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Order, OrderSchema } from '@app/common';
+import { PromocodesModule } from './promocodes/promocodes.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { Order, OrderSchema } from '@app/common';
       }),
       envFilePath: ['./apps/orders/.env'],
     }),
+    PromocodesModule,
     DatabaseModule,
     AuthModule,
     MongooseModule.forFeature([{ name: Order.name, schema: OrderSchema }]),
@@ -32,5 +34,6 @@ import { Order, OrderSchema } from '@app/common';
   ],
   controllers: [OrdersController],
   providers: [OrdersService, OrdersRepository],
+  exports: [OrdersService],
 })
 export class OrdersModule {}

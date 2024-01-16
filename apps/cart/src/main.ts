@@ -10,7 +10,6 @@ async function bootstrap() {
   const config = app.get(ConfigService);
   const rmqService = app.get<RmqService>(RmqService);
 
-
   await app.connectMicroservice(rmqService.getOptions(CART_SERVICE, true));
   await app.startAllMicroservices();
 

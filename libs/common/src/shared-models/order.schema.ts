@@ -6,10 +6,10 @@ import { CartItem } from './cart.schema';
 @Schema({ timestamps: true, versionKey: false })
 export class Order extends AbstractDocument {
   @Prop({ type: Types.ObjectId, required: true, ref: 'User' })
-  userId: Types.ObjectId;
+  readonly userId: Types.ObjectId;
 
   @Prop({ type: Boolean, required: true })
-  isPaid: boolean;
+  readonly isPaid: boolean;
 
   @Prop({
     type: Number,
@@ -18,10 +18,16 @@ export class Order extends AbstractDocument {
     get: (value: number) => parseFloat(value.toFixed(2)),
     set: (value: number) => parseFloat(value.toFixed(2)),
   })
-  totalAmount: number;
+  readonly totalAmount: number;
 
   @Prop({ required: true })
-  products: Array<CartItem>;
+  readonly products: Array<CartItem>;
+
+  @Prop({
+    required: true,
+    type: [{ type: Types.ObjectId, unique: true, ref: 'Promocode' }],
+  })
+  readonly appliedPromocodes: Array<Types.ObjectId>;
 }
 
 export const OrderSchema = SchemaFactory.createForClass(Order);

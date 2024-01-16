@@ -1,7 +1,6 @@
 import { IsMongoId, IsNotEmpty } from 'class-validator';
-import { Types } from 'mongoose';
 
-export class AddToCartDto {
+export class UpdateCartDto {
   @IsNotEmpty()
   @IsMongoId()
   productId: string;

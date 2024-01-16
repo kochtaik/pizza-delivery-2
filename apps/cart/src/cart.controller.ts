@@ -8,7 +8,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { CartService } from './cart.service';
-import { AddToCartDto } from './dto';
+import { UpdateCartDto } from './dto';
 import { Request } from 'express';
 import { FullJwtPayload, JwtGuard } from '@app/common';
 import { EventPattern } from '@nestjs/microservices';
@@ -21,7 +21,7 @@ export class CartController {
   @UseGuards(JwtGuard)
   async addToCart(
     @Req() req: Request & { user: FullJwtPayload },
-    @Body() addToCartDto: AddToCartDto,
+    @Body() addToCartDto: UpdateCartDto,
   ) {
     return this.cartService.updateCart(req.user.sub, addToCartDto);
   }
