@@ -6,7 +6,6 @@ import {
   IsNotEmpty,
   IsNumber,
   Min,
-  ValidateNested,
 } from 'class-validator';
 import { Types } from 'mongoose';
 import { CreateOrderItemDto } from './create-order-item.dto';

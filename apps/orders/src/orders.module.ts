@@ -1,18 +1,19 @@
 import { Module } from '@nestjs/common';
-import { OrdersController } from './orders.controller';
-import { OrdersService } from './orders.service';
+import { OrdersController, PromocodesController } from './controllers';
+import { OrdersService, PromocodesService } from './services';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 import {
   AuthModule,
   CART_SERVICE,
   DatabaseModule,
+  Promocode,
+  PromocodeSchema,
   RmqModule,
 } from '@app/common';
-import { OrdersRepository } from './orders.repository';
+import { OrdersRepository, PromocodesRepository } from './repositories';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Order, OrderSchema } from '@app/common';
-import { PromocodesModule } from './promocodes/promocodes.module';
 
 @Module({
   imports: [
@@ -26,14 +27,20 @@ import { PromocodesModule } from './promocodes/promocodes.module';
       }),
       envFilePath: ['./apps/orders/.env'],
     }),
-    PromocodesModule,
     DatabaseModule,
     AuthModule,
-    MongooseModule.forFeature([{ name: Order.name, schema: OrderSchema }]),
+    MongooseModule.forFeature([
+      { name: Order.name, schema: OrderSchema },
+      { name: Promocode.name, schema: PromocodeSchema },
+    ]),
     RmqModule.register({ name: CART_SERVICE }),
   ],
-  controllers: [OrdersController],
-  providers: [OrdersService, OrdersRepository],
-  exports: [OrdersService],
+  controllers: [OrdersController, PromocodesController],
+  providers: [
+    OrdersService,
+    PromocodesService,
+    OrdersRepository,
+    PromocodesRepository,
+  ],
 })
 export class OrdersModule {}

@@ -1,17 +1,10 @@
-import {
-  Body,
-  Controller,
-  // Get,
-  // Param,
-  Post,
-  Req,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
 import { CartService } from './cart.service';
 import { UpdateCartDto } from './dto';
 import { Request } from 'express';
 import { FullJwtPayload, JwtGuard } from '@app/common';
-import { EventPattern } from '@nestjs/microservices';
+import { EventPattern, MessagePattern } from '@nestjs/microservices';
+import { Types } from 'mongoose';
 
 @Controller('cart')
 export class CartController {
@@ -31,9 +24,14 @@ export class CartController {
     return this.cartService.clearCart(payload.cartId);
   }
 
-  // @Get()
-  // @UseGuards(JwtGuard)
-  // async getCart(@Req() req: Request & { user: FullJwtPayload }) {
-  //   return this.cartService.getCart(req.user.sub);
-  // }
+  @Get()
+  @UseGuards(JwtGuard)
+  async getCart(@Req() req: Request & { user: FullJwtPayload }) {
+    return this.cartService.getUserCart(new Types.ObjectId(req.user.sub));
+  }
+
+  @MessagePattern('get-cart')
+  async getCartById(userId: string) {
+    return this.cartService.getUserCart(new Types.ObjectId(userId));
+  }
 }

@@ -1,6 +1,6 @@
 import { Body, Controller, Param, Post, Put, UseGuards } from '@nestjs/common';
-import { ApplyPromocodeDto, CreatePromocodeDto } from './dto';
-import { PromocodesService } from './promocodes.service';
+import { ApplyPromocodeDto, CreatePromocodeDto } from '../dto';
+import { PromocodesService } from '../services';
 import { JwtGuard, Role, Roles, RolesGuard } from '@app/common';
 
 @Controller('orders/promocodes')
@@ -9,7 +9,7 @@ export class PromocodesController {
 
   @Post()
   @Roles(Role.ADMIN)
-  @UseGuards(RolesGuard, JwtGuard)
+  @UseGuards(JwtGuard, RolesGuard)
   createPromocode(@Body() createPromocodeDto: CreatePromocodeDto) {
     return this.promocodesService.createPromocode(createPromocodeDto);
   }
@@ -18,7 +18,7 @@ export class PromocodesController {
   @UseGuards(JwtGuard)
   applyPromocode(
     @Param('promocodeId') promocodeId: string,
-    applyPromocodeDto: ApplyPromocodeDto,
+    @Body() applyPromocodeDto: ApplyPromocodeDto,
   ) {
     return this.promocodesService.applyPromocode(
       promocodeId,

@@ -1,9 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { ApplyPromocodeDto, CreatePromocodeDto } from './dto';
-import { PromocodesRepository } from './promocodes.repository';
-import { OrdersService } from '../orders.service';
-import { Order } from '@app/common';
-import { UpdateOrderDto } from '../dto';
+import { ApplyPromocodeDto, CreatePromocodeDto, UpdateOrderDto } from '../dto';
+import { PromocodesRepository } from '../repositories';
+import { OrdersService } from './orders.service';
+import { Order, isDuplicatedKeyError } from '@app/common';
 
 @Injectable()
 export class PromocodesService {
@@ -18,6 +17,7 @@ export class PromocodesService {
     const promocode =
       await this.promocodesRepository.getPromocodeById(promocodeId);
     const order = await this.ordersService.getOrderById(orderId);
+
     if (this.isPromocodeApplied(order, promocodeId)) {
       throw new BadRequestException(
         'This promo code has been already applied to this order.',
@@ -42,7 +42,13 @@ export class PromocodesService {
     try {
       return await this.promocodesRepository.create(createPromocodeDto);
     } catch (error) {
-      // TODO: handle MongoDb error, if 'code' is not unique
+      console.error(error);
+      if (isDuplicatedKeyError(error)) {
+        throw new BadRequestException(
+          'Promocode with this code already exists',
+        );
+      }
+
       throw error;
     }
   }

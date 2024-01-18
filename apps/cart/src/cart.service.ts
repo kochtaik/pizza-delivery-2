@@ -85,7 +85,7 @@ export class CartService {
     );
   }
 
-  private async getUserCart(userId: Types.ObjectId) {
+  public async getUserCart(userId: Types.ObjectId) {
     try {
       return await this.cartRepository.findOne({ userId });
     } catch (error) {

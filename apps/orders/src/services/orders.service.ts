@@ -4,13 +4,12 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { OrdersRepository } from './orders.repository';
+import { OrdersRepository } from '../repositories';
 import { ClientProxy } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 import { Types } from 'mongoose';
 import { CART_SERVICE, Cart } from '@app/common';
-import { UpdateOrderDto } from './dto';
-import { CreateOrderDto } from './dto/create-order.dto';
+import { UpdateOrderDto, CreateOrderDto } from '../dto';
 
 @Injectable()
 export class OrdersService {
@@ -22,10 +21,10 @@ export class OrdersService {
   public async createOrder(userId: string) {
     try {
       const cart = await lastValueFrom(
-        this.cartService.send<Cart>('getCart', userId),
+        this.cartService.send<Cart>('get-cart', userId),
       );
-      console.log({ cart });
-      if (!cart) {
+
+      if (!cart || cart.items.length === 0) {
         throw new UnprocessableEntityException('Cart must not be empty');
       }
 
@@ -43,6 +42,7 @@ export class OrdersService {
       return order;
     } catch (error) {
       console.error(error);
+      throw error;
     }
   }
 
@@ -50,7 +50,10 @@ export class OrdersService {
     return this.ordersRepository.findUnpaidOrders();
   }
 
-  public async updateOrder(orderId, updateOrderDto: UpdateOrderDto) {
+  public async updateOrder(
+    orderId: Types.ObjectId,
+    updateOrderDto: UpdateOrderDto,
+  ) {
     return this.ordersRepository.updateSingleOrder(orderId, updateOrderDto);
   }
 

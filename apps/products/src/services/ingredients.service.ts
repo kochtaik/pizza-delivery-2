@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { IngredientsRepository } from '../repositories';
 import { CreateIngredientDto } from '../dto';
-import { MongoError } from 'mongodb';
+import { isDuplicatedKeyError } from '@app/common';
 
 @Injectable()
 export class IngredientsService {
@@ -15,12 +15,7 @@ export class IngredientsService {
     try {
       return await this.ingredientsRepository.create(createIngredientDto);
     } catch (error) {
-      const DUPLICATE_KEY_ERROR_CODE = 11000;
-
-      if (
-        error instanceof MongoError &&
-        error.code === DUPLICATE_KEY_ERROR_CODE
-      ) {
+      if (isDuplicatedKeyError(error)) {
         throw new BadRequestException(
           'Ingredient with this name already exists',
         );

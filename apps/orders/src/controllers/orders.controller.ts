@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
-import { OrdersService } from './orders.service';
+import { OrdersService } from '../services';
 import { Request } from 'express';
 import { FullJwtPayload, JwtGuard, Role, Roles, RolesGuard } from '@app/common';
 
