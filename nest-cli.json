@@ -54,6 +54,15 @@
       "compilerOptions": {
         "tsConfigPath": "apps/cart/tsconfig.app.json"
       }
+    },
+    "images": {
+      "type": "application",
+      "root": "apps/images",
+      "entryFile": "main",
+      "sourceRoot": "apps/images/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/images/tsconfig.app.json"
+      }
     }
   }
 }

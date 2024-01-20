@@ -63,6 +63,22 @@ services:
     ports:
       - '3003:3003'
 
+  images:
+    build:
+      context: .
+      dockerfile: ./apps/images/Dockerfile
+      target: development
+    command: yarn run start:dev images
+    env_file:
+      - ./apps/images/.env
+    depends_on:
+      - mongodb
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '3004:3004'
+
   mongodb:
     image: mongo
     environment:
