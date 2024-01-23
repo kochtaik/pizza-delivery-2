@@ -19,10 +19,11 @@ import { STORAGE_FOLDER } from './constants';
 import { imageFileFilter, editFileName } from './utils';
 import { unlink } from 'fs/promises';
 import { extractBaseUrlFromRequest } from '@app/common';
+import { ImagesRepository } from './images.repository';
 
 @Controller('images')
 export class ImagesController {
-  constructor() {}
+  constructor(private readonly imagesRepository: ImagesRepository) {}
 
   @Post('add')
   @UseInterceptors(
@@ -39,6 +40,15 @@ export class ImagesController {
     @UploadedFile() file: Express.Multer.File,
   ) {
     const baseUrl = extractBaseUrlFromRequest(request);
+    const url = `${baseUrl}/images/${file.filename}`;
+
+    await this.imagesRepository.create({
+      url,
+      filename: file.filename,
+      mimetype: file.mimetype,
+      originalname: file.originalname,
+    });
+
     return { url: `${baseUrl}/images/${file.filename}` };
   }
 
@@ -66,6 +76,7 @@ export class ImagesController {
   async deleteImage(@Param('imgName') imgName: string) {
     try {
       await unlink(`${STORAGE_FOLDER}/${imgName}`);
+      await this.imagesRepository.deleteOne({ filename: imgName });
       return { success: true };
     } catch (error) {
       if (error.code === 'ENOENT') {
