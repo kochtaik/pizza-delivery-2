@@ -13,4 +13,8 @@ export class ProductsRepository extends AbstractRepository<Product> {
   ) {
     super(model, connection);
   }
+
+  async removeImageFromProduct(url: string) {
+    return this.model.updateMany({ image: url }, { $set: { image: '' } });
+  }
 }

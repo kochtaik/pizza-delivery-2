@@ -6,6 +6,8 @@ import {
   IsArray,
   ArrayUnique,
   Validate,
+  IsMongoId,
+  IsOptional,
 } from 'class-validator';
 import { IngredientExistsValidator } from '../../validators';
 
@@ -33,4 +35,8 @@ export class CreateProductDto {
   @ArrayUnique()
   @Validate(IngredientExistsValidator, { each: true })
   readonly ingredients: Array<string>;
+
+  @IsOptional()
+  @IsMongoId()
+  readonly imageId: string;
 }

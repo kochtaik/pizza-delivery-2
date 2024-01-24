@@ -14,7 +14,7 @@ import { CreateProductDto, UpdateProductDto } from '../dto';
 import { MongoIdValidationPipe } from '@app/common/shared-pipes';
 import { JwtGuard, Role, RolesGuard } from '@app/common';
 import { Roles } from '@app/common/auth/decorators';
-import { MessagePattern } from '@nestjs/microservices';
+import { EventPattern, MessagePattern, Payload } from '@nestjs/microservices';
 
 @Controller('products')
 export class ProductsController {
@@ -56,5 +56,10 @@ export class ProductsController {
   @MessagePattern('getProduct')
   getProduct(id: string) {
     return this.productsService.getProduct(id);
+  }
+
+  @EventPattern('image-removed')
+  async onImageRemoved(@Payload() url: string) {
+    await this.productsService.removeImageFromProduct(url);
   }
 }

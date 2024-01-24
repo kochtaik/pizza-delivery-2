@@ -7,7 +7,6 @@ import {
   UseInterceptors,
   Res,
   Delete,
-  NotFoundException,
   Next,
   Req,
 } from '@nestjs/common';
@@ -17,13 +16,12 @@ import type { NextFunction, Response, Request } from 'express';
 import { diskStorage } from 'multer';
 import { STORAGE_FOLDER } from './constants';
 import { imageFileFilter, editFileName } from './utils';
-import { unlink } from 'fs/promises';
-import { extractBaseUrlFromRequest } from '@app/common';
-import { ImagesRepository } from './images.repository';
+import { MessagePattern } from '@nestjs/microservices';
+import { ImagesService } from './images.service';
 
 @Controller('images')
 export class ImagesController {
-  constructor(private readonly imagesRepository: ImagesRepository) {}
+  constructor(private readonly imageService: ImagesService) {}
 
   @Post('add')
   @UseInterceptors(
@@ -39,20 +37,10 @@ export class ImagesController {
     @Req() request: Request,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    const baseUrl = extractBaseUrlFromRequest(request);
-    const url = `${baseUrl}/images/${file.filename}`;
-
-    await this.imagesRepository.create({
-      url,
-      filename: file.filename,
-      mimetype: file.mimetype,
-      originalname: file.originalname,
-    });
-
-    return { url: `${baseUrl}/images/${file.filename}` };
+    return this.imageService.createImage(request, file);
   }
 
-  @Get(':imgName')
+  @Get('/file/:imgName')
   async getSingleImage(
     @Res() res: Response,
     @Next() next: NextFunction,
@@ -72,18 +60,18 @@ export class ImagesController {
     );
   }
 
-  @Delete(':imgName')
-  async deleteImage(@Param('imgName') imgName: string) {
-    try {
-      await unlink(`${STORAGE_FOLDER}/${imgName}`);
-      await this.imagesRepository.deleteOne({ filename: imgName });
-      return { success: true };
-    } catch (error) {
-      if (error.code === 'ENOENT') {
-        throw new NotFoundException('Image does not exist');
-      }
+  @Get(':id')
+  async getImageById(@Param('id') id: string) {
+    return this.imageService.getImageById(id);
+  }
 
-      throw error;
-    }
+  @Delete(':id')
+  async deleteImage(@Param('id') id: string) {
+    return this.deleteImage(id);
+  }
+
+  @MessagePattern('get-image')
+  async getImage(imageId: string) {
+    return this.imageService.getImageById(imageId);
   }
 }
