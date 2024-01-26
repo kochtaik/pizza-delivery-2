@@ -9,6 +9,7 @@ import {
   Delete,
   Next,
   Req,
+  UseGuards,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Express } from 'express';
@@ -18,12 +19,14 @@ import { STORAGE_FOLDER } from './constants';
 import { imageFileFilter, editFileName } from './utils';
 import { MessagePattern } from '@nestjs/microservices';
 import { ImagesService } from './images.service';
+import { JwtGuard } from '@app/common';
 
 @Controller('images')
 export class ImagesController {
   constructor(private readonly imageService: ImagesService) {}
 
   @Post('add')
+  @UseGuards(JwtGuard)
   @UseInterceptors(
     FileInterceptor('image', {
       storage: diskStorage({
@@ -61,11 +64,13 @@ export class ImagesController {
   }
 
   @Get(':id')
+  @UseGuards(JwtGuard)
   async getImageById(@Param('id') id: string) {
     return this.imageService.getImageById(id);
   }
 
   @Delete(':id')
+  @UseGuards(JwtGuard)
   async deleteImage(@Param('id') id: string) {
     return this.deleteImage(id);
   }
