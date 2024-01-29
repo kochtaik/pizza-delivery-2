@@ -1,7 +1,7 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateProductDto, UpdateProductDto } from './../dto';
 import { ProductsRepository } from './../repositories';
-import { IMAGES_SERVICE, Image, Product } from '@app/common';
+import { IMAGES_SERVICE, Image, PaginationOptions, Product } from '@app/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 
@@ -41,8 +41,8 @@ export class ProductsService {
     );
   }
 
-  async getProducts() {
-    return this.productsRepository.find({});
+  async getProducts(paginationOptions: PaginationOptions) {
+    return await this.productsRepository.paginate(paginationOptions);
   }
 
   async getProduct(productId: string) {

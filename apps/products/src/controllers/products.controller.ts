@@ -8,6 +8,7 @@ import {
   UsePipes,
   Patch,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { ProductsService } from '../services';
 import { CreateProductDto, UpdateProductDto } from '../dto';
@@ -37,8 +38,12 @@ export class ProductsController {
   }
 
   @Get()
-  getAllProducts() {
-    return this.productsService.getProducts();
+  @UseGuards(JwtGuard)
+  getAllProducts(
+    @Query('limit') limit: string = '',
+    @Query('page') page: string = '',
+  ) {
+    return this.productsService.getProducts({ limit, page });
   }
 
   @Get(':id')

@@ -9,6 +9,11 @@ import {
 } from 'mongoose';
 import { AbstractDocument } from './abstract.schema';
 
+export interface PaginationOptions {
+  limit: string;
+  page: string;
+}
+
 export abstract class AbstractRepository<TDocument extends AbstractDocument> {
   protected abstract readonly logger: Logger;
 
@@ -85,5 +90,27 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
     const session = await this.connection.startSession();
     session.startTransaction();
     return session;
+  }
+
+  async insertMany(items: Array<TDocument>) {
+    return this.model.insertMany(items);
+  }
+
+  async paginate(paginationOptions: PaginationOptions) {
+    const limit = Number(paginationOptions.limit);
+    const page = Number(paginationOptions.page);
+    const skip = limit * (page - 1);
+
+    const items = await this.model.find().skip(skip).limit(limit).lean();
+    const totalItemsNumber = await this.model.countDocuments();
+
+    return {
+      items,
+      pagination: {
+        totalItems: totalItemsNumber,
+        totalPages: Math.ceil(totalItemsNumber / limit),
+        page,
+      },
+    };
   }
 }
