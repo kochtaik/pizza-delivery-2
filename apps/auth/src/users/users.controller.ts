@@ -1,4 +1,13 @@
-import { Body, Controller, Param, Post, Put, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto, AssignRolesDto } from './dto';
 import { Roles, JwtGuard, Role, RolesGuard } from '@app/common';
@@ -20,5 +29,15 @@ export class UsersController {
     @Body() assignRolesDto: AssignRolesDto,
   ) {
     return this.usersService.assignRoles(userId, assignRolesDto);
+  }
+
+  @Get()
+  @Roles(Role.ADMIN)
+  @UseGuards(JwtGuard, RolesGuard)
+  getAllUsers(
+    @Query('limit') limit: string = '',
+    @Query('page') page: string = '',
+  ) {
+    return this.usersService.getAllUsers({ limit, page });
   }
 }

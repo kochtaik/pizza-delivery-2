@@ -96,12 +96,19 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
     return this.model.insertMany(items);
   }
 
-  async paginate(paginationOptions: PaginationOptions) {
+  async paginate(
+    paginationOptions: PaginationOptions,
+    filterQuery: FilterQuery<TDocument> = {},
+  ) {
     const limit = Number(paginationOptions.limit);
     const page = Number(paginationOptions.page);
     const skip = limit * (page - 1);
 
-    const items = await this.model.find().skip(skip).limit(limit).lean();
+    const items = await this.model
+      .find(filterQuery)
+      .skip(skip)
+      .limit(limit)
+      .lean();
     const totalItemsNumber = await this.model.countDocuments();
 
     return {

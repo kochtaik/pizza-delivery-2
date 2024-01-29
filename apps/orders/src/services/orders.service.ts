@@ -8,7 +8,7 @@ import { OrdersRepository } from '../repositories';
 import { ClientProxy } from '@nestjs/microservices';
 import { lastValueFrom } from 'rxjs';
 import { Types } from 'mongoose';
-import { CART_SERVICE, Cart } from '@app/common';
+import { CART_SERVICE, Cart, PaginationOptions } from '@app/common';
 import { UpdateOrderDto, CreateOrderDto } from '../dto';
 
 @Injectable()
@@ -46,8 +46,8 @@ export class OrdersService {
     }
   }
 
-  public async getActiveOrders() {
-    return this.ordersRepository.findUnpaidOrders();
+  public async getActiveOrders(paginationOptions: PaginationOptions) {
+    return this.ordersRepository.findUnpaidOrders(paginationOptions);
   }
 
   public async updateOrder(

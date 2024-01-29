@@ -1,4 +1,12 @@
-import { Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { OrdersService } from '../services';
 import { Request } from 'express';
 import { FullJwtPayload, JwtGuard, Role, Roles, RolesGuard } from '@app/common';
@@ -17,8 +25,11 @@ export class OrdersController {
   @Get()
   @Roles(Role.ADMIN)
   @UseGuards(JwtGuard, RolesGuard)
-  async getActiveOrders() {
-    return this.ordersService.getActiveOrders();
+  async getActiveOrders(
+    @Query('limit') limit: string = '',
+    @Query('page') page: string = '',
+  ) {
+    return this.ordersService.getActiveOrders({ limit, page });
   }
 
   @Get(':id')

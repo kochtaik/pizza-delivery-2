@@ -2,7 +2,7 @@ import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { UsersRepository } from './users.repository';
 import { CreateUserDto } from './dto/create-user.dto';
 import * as argon from 'argon2';
-import { Role } from '@app/common';
+import { PaginationOptions, Role } from '@app/common';
 import { AssignRolesDto } from './dto';
 
 @Injectable()
@@ -43,5 +43,9 @@ export class UsersService {
     };
 
     return await this.usersRepository.create(userToSave);
+  }
+
+  async getAllUsers(paginationOptions: PaginationOptions) {
+    return await this.usersRepository.paginate(paginationOptions);
   }
 }

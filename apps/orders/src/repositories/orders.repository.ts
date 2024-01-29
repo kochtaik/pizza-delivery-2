@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { AbstractRepository, Order } from '@app/common';
+import { AbstractRepository, Order, PaginationOptions } from '@app/common';
 import { InjectModel, InjectConnection } from '@nestjs/mongoose';
 import { Connection, Model, Types } from 'mongoose';
 import { UpdateOrderDto } from '../dto';
@@ -15,8 +15,8 @@ export class OrdersRepository extends AbstractRepository<Order> {
     super(model, connection);
   }
 
-  public findUnpaidOrders() {
-    return this.model.find({ isPaid: false });
+  public findUnpaidOrders(paginationOptions: PaginationOptions) {
+    return this.paginate(paginationOptions, { isPaid: false });
   }
 
   public updateSingleOrder(
