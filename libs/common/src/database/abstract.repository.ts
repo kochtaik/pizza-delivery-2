@@ -1,4 +1,4 @@
-import { Logger, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Logger, NotFoundException } from '@nestjs/common';
 import {
   FilterQuery,
   Model,
@@ -102,6 +102,11 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
   ) {
     const limit = Number(paginationOptions.limit);
     const page = Number(paginationOptions.page);
+
+    if (limit <= 0 || page <= 0) {
+      throw new BadRequestException('Invalid pagination options.');
+    }
+
     const skip = limit * (page - 1);
 
     const items = await this.model
