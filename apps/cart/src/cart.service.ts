@@ -14,10 +14,10 @@ export class CartService {
   ) {}
 
   public async updateCart(userId: string, updateCartDto: UpdateCartDto) {
+    debugger
     const userIdMongo = new Types.ObjectId(userId);
     const productToAddIdMongo = new Types.ObjectId(updateCartDto.productId);
     const userCart = await this.getUserCart(userIdMongo);
-
     const cartProduct = userCart.items.find((cartItem) =>
       cartItem.productId.equals(productToAddIdMongo),
     );
