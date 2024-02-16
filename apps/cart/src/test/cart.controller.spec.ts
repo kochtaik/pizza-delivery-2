@@ -3,7 +3,6 @@ import { CartController } from '../cart.controller';
 import { CartService } from '../cart.service';
 import { AUTH_SERVICE, authGuardMock, requestStub } from '@app/common';
 import { cartStub } from './stubs/cart.stub';
-import { Types } from 'mongoose';
 import { updateCartDtoStub } from './stubs/updateCartDto.stub';
 
 jest.mock('../cart.service');
@@ -36,9 +35,7 @@ describe('CartController', () => {
       const cart = cartStub();
 
       await cartController.getCartById(cart.userId as string);
-      expect(cartService.getUserCart).toHaveBeenCalledWith(
-        new Types.ObjectId(cart.userId),
-      );
+      expect(cartService.getUserCart).toHaveBeenCalledWith(cart.userId);
     });
   });
 
@@ -46,9 +43,7 @@ describe('CartController', () => {
     it('should call cartService with appropriate value', async () => {
       const request = requestStub();
       await cartController.getCart(request);
-      expect(cartService.getUserCart).toHaveBeenCalledWith(
-        new Types.ObjectId(request.user.sub),
-      );
+      expect(cartService.getUserCart).toHaveBeenCalledWith(request.user.sub);
     });
   });
 
