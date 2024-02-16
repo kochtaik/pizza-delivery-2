@@ -19,7 +19,7 @@ export abstract class AbstractRepositoryMock<T> {
     return this.entityStub;
   }
 
-  async findOneandUpdate(): Promise<T> {
+  async findOneAndUpdate(): Promise<T> {
     return this.entityStub;
   }
 
