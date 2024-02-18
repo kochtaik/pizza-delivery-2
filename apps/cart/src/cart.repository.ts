@@ -15,11 +15,11 @@ export class CartRepository extends AbstractRepository<Cart> {
   }
 
   public async clearCart(cartId: string) {
-    return this.deleteOne({ _id: new Types.ObjectId(cartId) });
+    return this.deleteOne({ _id: cartId });
   }
 
   public async addToCart(
-    userCartId: Types.ObjectId,
+    userCartId: string,
     cartItem: Omit<CartItem, 'productId'> & { productId: string },
   ) {
     return this.findOneAndUpdate(
@@ -28,7 +28,7 @@ export class CartRepository extends AbstractRepository<Cart> {
         $push: {
           items: {
             ...cartItem,
-            productId: new Types.ObjectId(cartItem.productId),
+            productId: cartItem.productId,
           },
         },
       },

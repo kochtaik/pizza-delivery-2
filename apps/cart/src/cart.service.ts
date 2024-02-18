@@ -27,7 +27,7 @@ export class CartService {
     const actualProduct = await this.getProduct(updateCartDto.productId);
 
     if (!cartProduct) {
-      await this.cartRepository.addToCart(userCart._id, {
+      await this.cartRepository.addToCart(userCart._id.toString(), {
         ...updateCartDto,
         price: actualProduct.price,
       });

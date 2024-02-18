@@ -1,5 +1,4 @@
 import { Cart } from '@app/common';
-import { Types } from 'mongoose';
 
 export const cartStub = (): Cart & { _id: string; userId: string } => {
   return {
@@ -8,17 +7,17 @@ export const cartStub = (): Cart & { _id: string; userId: string } => {
     items: [
       {
         price: 12.99,
-        productId: new Types.ObjectId('65c1e0d599d26b570e2cde78'),
+        productId: '65c1e0d599d26b570e2cde78' as any,
         quantity: 1,
       },
       {
         price: 0.33,
-        productId: new Types.ObjectId('65c1e0d599d26b570e2cde79'),
+        productId: '65c1e0d599d26b570e2cde79' as any,
         quantity: 19,
       },
       {
         price: 123.0,
-        productId: new Types.ObjectId('65c1e0d599d26b570e2cde80'),
+        productId: '65c1e0d599d26b570e2cde80' as any,
         quantity: 32,
       },
     ],

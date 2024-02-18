@@ -7,9 +7,6 @@ export abstract class AbstractRepositoryMock<T> {
 
   constructorSpy(_createEntityData: T): void {}
 
-  async create(): Promise<T> {
-    return this.entityStub;
-  }
 
   async findOne(): Promise<T> {
     return this.entityStub;
@@ -51,5 +48,9 @@ export abstract class AbstractRepositoryMock<T> {
         page: 1,
       },
     };
+  }
+
+  async create(): Promise<T> {
+    return this.entityStub;
   }
 }

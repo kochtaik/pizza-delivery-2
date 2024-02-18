@@ -6,7 +6,7 @@ import { AbstractDocument } from '../database';
  * TODO: replace with schema.
  */
 export interface CartItem {
-  productId: Types.ObjectId;
+  productId: Types.ObjectId | string;
   quantity: number;
   price: number;
 }
