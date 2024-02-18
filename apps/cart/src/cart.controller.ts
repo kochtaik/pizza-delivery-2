@@ -4,7 +4,6 @@ import { UpdateCartDto } from './dto';
 import { Request } from 'express';
 import { FullJwtPayload, JwtGuard } from '@app/common';
 import { EventPattern, MessagePattern } from '@nestjs/microservices';
-import { Types } from 'mongoose';
 
 @Controller('cart')
 export class CartController {
@@ -27,11 +26,11 @@ export class CartController {
   @Get()
   @UseGuards(JwtGuard)
   async getCart(@Req() req: Request & { user: FullJwtPayload }) {
-    return this.cartService.getUserCart(new Types.ObjectId(req.user.sub));
+    return this.cartService.getUserCart(req.user.sub);
   }
 
   @MessagePattern('get-cart')
   async getCartById(userId: string) {
-    return this.cartService.getUserCart(new Types.ObjectId(userId));
+    return this.cartService.getUserCart(userId);
   }
 }

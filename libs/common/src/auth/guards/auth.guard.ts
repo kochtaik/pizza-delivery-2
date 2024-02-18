@@ -16,7 +16,7 @@ export class JwtGuard implements CanActivate {
   constructor(@Inject(AUTH_SERVICE) private readonly client: ClientProxy) {}
 
   async canActivate(context: ExecutionContext) {
-    const request = context.switchToHttp().getRequest<Request>();
+    const request: any = context.switchToHttp().getRequest<Request>();
     const token = this.extractTokenFromHeader(request);
 
     if (!token) {
