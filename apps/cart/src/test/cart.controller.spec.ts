@@ -1,7 +1,7 @@
 import { Test } from '@nestjs/testing';
 import { CartController } from '../cart.controller';
 import { CartService } from '../cart.service';
-import { AUTH_SERVICE, authGuardMock, requestStub } from '@app/common';
+import { AUTH_SERVICE, requestStub } from '@app/common';
 import { cartStub } from './stubs/cart.stub';
 import { updateCartDtoStub } from './stubs/updateCartDto.stub';
 
@@ -19,7 +19,7 @@ describe('CartController', () => {
         CartService,
         {
           provide: AUTH_SERVICE,
-          useValue: authGuardMock,
+          useValue: jest.fn(() => ({ canActivate: () => true })),
         },
       ],
     }).compile();

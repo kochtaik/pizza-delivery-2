@@ -20,7 +20,7 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
   constructor(
     protected readonly model: Model<TDocument>,
     private readonly connection: Connection,
-  ) {}
+  ) { }
 
   async create(
     document: Omit<TDocument, '_id'>,
@@ -97,7 +97,16 @@ export abstract class AbstractRepository<TDocument extends AbstractDocument> {
     const limit = Number(paginationOptions.limit);
     const page = Number(paginationOptions.page);
 
-    if (limit <= 0 || page <= 0) {
+    const noPagination = limit === 0 && page === 0;
+
+    if (noPagination) {
+      return this.find(filterQuery);
+    }
+
+    const isLimitInvalid = limit < 1;
+    const isPageInvalid = page < 1;
+
+    if (isLimitInvalid || isPageInvalid) {
       throw new BadRequestException('Invalid pagination options.');
     }
 

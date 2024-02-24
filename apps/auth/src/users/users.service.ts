@@ -7,17 +7,14 @@ import { AssignRolesDto } from './dto';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly usersRepository: UsersRepository) {}
+  constructor(private readonly usersRepository: UsersRepository) { }
 
-  async getUserByEmail(email: string) {
-    return await this.usersRepository.findOne({ email });
+  public async getUserByEmail(email: string) {
+    return await this.usersRepository.getUserByEmail(email);
   }
 
   async assignRoles(userId: string, { roles }: AssignRolesDto) {
-    return await this.usersRepository.findOneAndUpdate(
-      { _id: userId },
-      { roles },
-    );
+    return await this.usersRepository.assignRoles(userId, roles);
   }
 
   private async checkIfUserExists(email: string) {
@@ -31,12 +28,12 @@ export class UsersService {
     }
   }
 
-  async createUser(createUserDto: CreateUserDto) {
+  public async createUser(createUserDto: CreateUserDto) {
     await this.checkIfUserExists(createUserDto.email);
 
     const hash = await argon.hash(createUserDto.password);
 
-    const userToSave: CreateUserDto & { roles: Array<Role> } = {
+    const userToSave: CreateUserDto & { roles: Array<Role>; } = {
       ...createUserDto,
       password: hash,
       roles: [Role.USER],
@@ -45,7 +42,11 @@ export class UsersService {
     return await this.usersRepository.create(userToSave);
   }
 
-  async getAllUsers(paginationOptions: PaginationOptions) {
+  public async getAllUsers(paginationOptions: PaginationOptions) {
     return await this.usersRepository.paginate(paginationOptions);
+  }
+
+  public deleteAccount(userId: string) {
+    return this.usersRepository.deleteOne({ _id: userId });
   }
 }
